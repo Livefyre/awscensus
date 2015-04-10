@@ -1,0 +1,13 @@
+aws_ec2:
+  aws_access_key: !spec
+    description: access key for account.
+    type: !!str ""
+    value: !required
+  aws_secret_key: !spec
+    description: secret key for account.
+    type: !!str ""
+    value: !required
+  aws_region: !spec
+    description: ec2 region
+    type: !!str ""
+    value: !required

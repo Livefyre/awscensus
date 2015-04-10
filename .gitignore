@@ -1,0 +1,7 @@
+build/
+dist/
+eggs/
+awscensus.egg-info/
+reap/__init__.pyc
+*/*.pyc
+**.swp

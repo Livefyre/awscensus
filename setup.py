@@ -17,7 +17,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1',
+    version='0.2',
     description='Tools to gather usage information in AWS',
     # The project's main homepage.
     url='https://github.com/Livefyre/awscensus',
@@ -27,7 +27,7 @@ setup(
     author_email='nfowler@livefyre.com',
 
     # What does your project relate to?
-    keywords='aws ec2 reap',
+    keywords='aws ec2 reap census reserved instances',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -52,6 +52,7 @@ setup(
     entry_points={
         'console_scripts': [
             'reap=reap:main',
+            'awscensus=awscensus:main',
         ],
     },
 )

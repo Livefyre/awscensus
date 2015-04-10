@@ -106,10 +106,10 @@ def refresh_instance(instance, config):
     return ret
 
 
-def refresh(workers=1):
+def refresh(conf, workers=1):
 
     print 'fetching instances...'
-    envs = ec2.config.get_envs()
+    envs = ec2.config.get_envs(conf)
 
     print 'queuing work...'
     upstream = Queue.Queue()

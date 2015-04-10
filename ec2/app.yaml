@@ -11,3 +11,7 @@ aws_ec2:
     description: ec2 region
     type: !!str ""
     value: !required
+  name: !spec
+    description: envs
+    type: !!str ""
+    value: !required

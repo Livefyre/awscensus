@@ -7,7 +7,7 @@ def get(accts):
     ris = {}
     for acct in accts:
         conn = ec2.instances.ec2_conn(acct)
-        acct_name = acct['name']
+        acct_name = acct['aws_ec2']['name']
         for ri in conn.get_all_reserved_instances():
             if ri.state != 'active':
                 sys.stderr.write("RI %s excluded because it's not active\n" % ri.id)

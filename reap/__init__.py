@@ -34,24 +34,9 @@ def get_host_list():
 
 def main():
     args = docopt(usage)
-    if args['--config'] is not None:
-        conf = args['--config'].split(",")
-    else:
-        conf = list()
-
-    envs = ec2.config.get_envs(conf)
-    instances = ec2.instances.get(envs, refresh=True)
-    exists = set([x['host'] for x in instances])
 
     hosts = get_host_list()
     hosts = [x.strip() for x in hosts]
 
     for host in hosts:
-        if host not in exists:
-            print host
-            if args['--nodry']:
-                subprocess.call(
-                    'sudo puppet node deactivate %s' % host, shell=True)
-                subprocess.call(
-                    'sudo puppet cert clean %s' % host, shell=True)
-
+        print host

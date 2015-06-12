@@ -41,7 +41,8 @@ def main():
 
     envs = ec2.config.get_envs(conf)
     instances = ec2.instances.get(envs, refresh=True)
-    exists = set([x['host'] for x in instances])
+    not_termed = [x for x in instances if x['state'] not in ("terminated")]
+    exists = set([x['host'] for x in not_termed])
 
     hosts = get_host_list()
     hosts = [x.strip() for x in hosts]

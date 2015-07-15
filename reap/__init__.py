@@ -29,7 +29,7 @@ def pdb_query(base_path, q_string = {'query':''}):
     return retval
 
 def get_host_list():
-    node_list = [node['certname'] for node in pdb_query("/v2/resources/Class/Lf_base")]
+    node_list = [(node['certname'].strip(),node['value'].strip()) for node in pdb_query("/v2/facts/ec2_instance_id")]
     return node_list
 
 def main():
@@ -42,17 +42,16 @@ def main():
     envs = ec2.config.get_envs(conf)
     instances = ec2.instances.get(envs, refresh=True)
     not_termed = [x for x in instances if x['state'] not in ("terminated")]
-    exists = set([x['host'] for x in not_termed])
+    exists = set([x['id'] for x in not_termed])
 
     hosts = get_host_list()
-    hosts = [x.strip() for x in hosts]
 
-    for host in hosts:
-        if host not in exists:
-            print host
+    for hostname, instanceid in hosts:
+        if instanceid not in exists:
+            print hostname
             if args['--nodry']:
                 subprocess.call(
-                    'sudo puppet node deactivate %s' % host, shell=True)
+                    'sudo puppet node deactivate %s' % hostname, shell=True)
                 subprocess.call(
-                    'sudo puppet cert clean %s' % host, shell=True)
+                    'sudo puppet cert clean %s' % hostname, shell=True)
 

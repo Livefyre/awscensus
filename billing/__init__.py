@@ -26,7 +26,6 @@ from csvorm import (
     Integer,
     Unicode,
     DateTime,
-    Float,
     )
 
 class BillCSV(Model):

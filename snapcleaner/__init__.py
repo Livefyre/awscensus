@@ -6,7 +6,7 @@ from    datetime import datetime, timedelta
 from    pyyacc.parser import build
 import  os
 
-import ec2.config
+import aws.config
 
 time_format="%Y-%m-%dT%H:%M:%S.000Z"
 
@@ -69,7 +69,7 @@ def main():
     else:
         conf = list()
 
-    envs = ec2.config.get_envs(conf)
+    envs = aws.config.get_envs(conf)
 
     for env in envs:
         access_key = env['aws_ec2']['aws_access_key']

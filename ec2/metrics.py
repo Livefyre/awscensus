@@ -10,8 +10,8 @@ import simplejson as json
 
 import boto
 
+import aws.config
 import ec2.instances
-import ec2.config
 
 
 METRICS_DATA = out = os.path.join(os.getcwd(), "metrics.json")
@@ -109,7 +109,7 @@ def refresh_instance(instance, config):
 def refresh(conf, workers=1):
 
     print 'fetching instances...'
-    envs = ec2.config.get_envs(conf)
+    envs = aws.config.get_envs(conf)
 
     print 'queuing work...'
     upstream = Queue.Queue()

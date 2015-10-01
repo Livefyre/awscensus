@@ -17,7 +17,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.7',
+    version='0.8',
     description='Tools to gather usage information in AWS',
     # The project's main homepage.
     url='https://github.com/Livefyre/awscensus',
@@ -37,13 +37,14 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['py-yacc','boto','docopt', 'requests', 'simplejson','demjson'],
+    install_requires=['py-yacc','boto','docopt', 'requests', 'simplejson','demjson', 'six', 'unicodecsv'],
+    dependency_links=['git+ssh://git@github.com/andrewguy9/csvorm.git@float#egg=csvorm-float'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
     package_data={
-        'ec2': ['app.yaml'],
+        'aws': ['app.yaml'],
     },
 
     # To provide executable scripts, use entry points in preference to the
@@ -53,6 +54,7 @@ setup(
         'console_scripts': [
             'reap=reap:main',
             'awscensus=awscensus:main',
+            'billing=billing:main',
             'snapcleaner=snapcleaner:main',
         ],
     },

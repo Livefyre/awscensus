@@ -24,10 +24,10 @@ import simplejson as json
 
 from docopt import docopt
 
+import aws.config
 import ec2.instances
 import ec2.tabular
 import ec2.metrics
-import ec2.config
 import ec2.specs
 import ec2.purchased
 
@@ -202,7 +202,7 @@ def main():
             return do_metrics_list(csv=args['--csv'])
 
     if args['instances']:
-        envs = ec2.config.get_envs(conf)
+        envs = aws.config.get_envs(conf)
 
         if args['list']:
             return do_instances_list(envs, csv=args['--csv']) #TODO DIRTY
@@ -211,7 +211,7 @@ def main():
             return do_instances_grouped(envs, csv=args['--csv']) #TODO DIRTY
 
     if args['purchased']:
-        accts = ec2.config.get_envs(conf)
+        accts = aws.config.get_envs(conf)
 
         return do_purchased_list(accts, csv=args['--csv'])
 

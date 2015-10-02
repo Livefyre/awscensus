@@ -12,6 +12,7 @@ Options:
 """
 
 import zipfile
+import sys
 from decimal import *
 import datetime
 import re
@@ -126,10 +127,10 @@ def cloudfront_monthly_prediction(bill_file,csv=False):
                 memo_dict[region]['Usage'].setdefault(linked_acct, {})
 
                 if 'Requests-Tier1' in usage_type:
-                    memo_dict[region]['Usage'][linked_acct]['HttpReqM'] = memo_dict[region]['Usage'][linked_acct].get('HttpReqM', 0) + Decimal(usage)
+                    memo_dict[region]['Usage'][linked_acct]['HttpReq'] = memo_dict[region]['Usage'][linked_acct].get('HttpReq', 0) + Decimal(usage)
 
                 if 'Requests-Tier2-HTTPS' in usage_type:
-                    memo_dict[region]['Usage'][linked_acct]['HttpSReqM'] = memo_dict[region]['Usage'][linked_acct].get('HttpSReqM', 0) + Decimal(usage)
+                    memo_dict[region]['Usage'][linked_acct]['HttpsReq'] = memo_dict[region]['Usage'][linked_acct].get('HttpsReq', 0) + Decimal(usage)
 
                 if 'DataTransfer-Out-Bytes' in usage_type:
                     memo_dict[region]['CostGB'] = re.search(r"\$([0-9.]+) per.*$",aws_rec.ItemDescription).group(1)
@@ -147,9 +148,15 @@ def cloudfront_monthly_prediction(bill_file,csv=False):
         for acct_id, usage_data in region_data['Usage'].iteritems():
             rec = prediction_csv.create()
             rec.AccountId = acct_id
-            rec.HttpReq = usage_data['HttpReqM']
-            rec.HttpsReq = usage_data['HttpSReqM']
-            rec.GB = usage_data['GB']
+            try:
+                rec.HttpReq = usage_data['HttpReq']
+                rec.HttpsReq = usage_data['HttpsReq']
+                rec.GB = usage_data['GB']
+            except KeyError, e:
+                sys.stderr.write('No data: %s\n' % str(e))
+                sys.stderr.write(region + '\n')
+                sys.stderr.write(str(acct_id) + '\n')
+                sys.stderr.write(str(usage_data) + '\n')
 
     prediction_csv.dump('cf_bill_prediction.csv')
     return 0

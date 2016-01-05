@@ -104,8 +104,8 @@ def do_metrics_list(csv=False):
     metrics = ec2.metrics.get()
 
     categories = [
-        'cpu', 'rd_bytes', 'rd_ops', 'wr_bytes', 'wr_ops', 'ni', 'no']
-    perctiles = ('50', '90', '99')
+        'cpu', 'cpu_cred', 'rd_bytes', 'rd_ops', 'wr_bytes', 'wr_ops', 'ni', 'no']
+    perctiles = ('50', '95', '99')
     names = ['%s_%s' % (c, p) for c in categories for p in perctiles]
 
     def getter(name):
@@ -154,7 +154,7 @@ def do_instances_grouped(envs, csv=False):
         ('env', lambda g: g.env),
         ('role', lambda g: g.role),
         ('num', lambda g: len(g)),
-        ('cpu_90', lambda g: g.metric('cpu_90')),
+        ('cpu_95', lambda g: g.metric('cpu_95')),
         ('virt', lambda g: g.virt),
         ('type', lambda g: g.type[0]), ]
 

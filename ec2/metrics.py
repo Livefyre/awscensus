@@ -24,6 +24,7 @@ def dumps(data):
 def get():
     mapper = collections.OrderedDict([
         ('CPUUtilizationPercent', 'cpu'),
+        ('CPUCreditBalanceCount', 'cpu_cred'),
         ('DiskReadBytes', 'rd_bytes'),
         ('DiskReadOpsCount', 'rd_ops'),
         ('DiskWriteBytes', 'wr_bytes'),
@@ -32,9 +33,9 @@ def get():
         ('NetworkOutBytes', 'no'),
         ('MemoryUsedBytes', 'mem',)])
 
-    perctiles = ('50', '90', '99')
+    perctiles = ('50', '95', '99')
 
-    DEFAULT = {'50': '', '90': '', '99': ''}
+    DEFAULT = {'50': '', '95': '', '99': ''}
 
     def mb(n):
         return int(float(n)/1024/1024)
@@ -44,7 +45,7 @@ def get():
     for id, metrics in data.iteritems():
         row = {}
         for lng, short in mapper.iteritems():
-            f = int if short == 'cpu' or short.endswith('_ops') else mb
+            f = int if short.startswith('cpu') or short.endswith('_ops') else mb
             for perctile in perctiles:
                 row['%s_%s' % (short, perctile)] = (
                     f(metrics.get(lng, DEFAULT)[perctile] or -1))
@@ -55,6 +56,7 @@ def get():
 def refresh_instance(instance, config):
     CW_METRIC_NAMES = [
         ['CPUUtilization', 'Percent'],
+        ['CPUCreditBalance', 'Count'],
         ['DiskWriteBytes', 'Bytes'],
         ['DiskReadBytes', 'Bytes'],
         ['DiskWriteOps', 'Count'],
@@ -91,18 +93,18 @@ def refresh_instance(instance, config):
 
         if not timeseries:
             median = ''
-            perctile_90 = ''
+            perctile_95 = ''
             perctile_99 = ''
         else:
             sorted_by_value = sorted(timeseries, key=lambda k: k['Average'])
             total_length = len(sorted_by_value)
             median = sorted_by_value[int(total_length/2)]['Average']
-            perctile_90 = sorted_by_value[int(0.9*total_length)]['Average']
+            perctile_95 = sorted_by_value[int(0.95*total_length)]['Average']
             perctile_99 = sorted_by_value[int(0.99*total_length)]['Average']
 
         # append unit to metric name, unless it's already part of the name
         metric_key = (metric+unit if unit not in metric else metric)
-        ret[metric_key] = {'50': median, '90': perctile_90, '99': perctile_99}
+        ret[metric_key] = {'50': median, '95': perctile_95, '99': perctile_99}
     return ret
 
 
@@ -114,10 +116,12 @@ def refresh(conf, workers=1):
     print 'queuing work...'
     upstream = Queue.Queue()
     downstream = Queue.Queue()
+    instances = []
     for env in envs:
-      instances = ec2.instances.get([env], refresh=True)
-      for instance in instances:
+      env_instances = ec2.instances.get([env], refresh=True)
+      for instance in env_instances:
           upstream.put( (instance, env) )
+      instances += env_instances
 
     def worker():
         while True:

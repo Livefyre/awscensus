@@ -33,9 +33,9 @@ def get():
         ('NetworkOutBytes', 'no'),
         ('MemoryUsedBytes', 'mem',)])
 
-    perctiles = ('50', '95', '99')
+    perctiles = ('1', '50', '95', '99')
 
-    DEFAULT = {'50': '', '95': '', '99': ''}
+    DEFAULT = {'1': '', '50': '', '95': '', '99': ''}
 
     def mb(n):
         return int(float(n)/1024/1024)
@@ -92,19 +92,21 @@ def refresh_instance(instance, config):
             unit=unit)
 
         if not timeseries:
+            perctile_01 = ''
             median = ''
             perctile_95 = ''
             perctile_99 = ''
         else:
             sorted_by_value = sorted(timeseries, key=lambda k: k['Average'])
             total_length = len(sorted_by_value)
+            perctile_01 = sorted_by_value[int(0.01*total_length)]['Average']
             median = sorted_by_value[int(total_length/2)]['Average']
-            perctile_95 = sorted_by_value[int(0.95*total_length)]['Average']
+            perctile_95 = sorted_by_value[int(0.9*total_length)]['Average']
             perctile_99 = sorted_by_value[int(0.99*total_length)]['Average']
 
         # append unit to metric name, unless it's already part of the name
         metric_key = (metric+unit if unit not in metric else metric)
-        ret[metric_key] = {'50': median, '95': perctile_95, '99': perctile_99}
+        ret[metric_key] = {'1': perctile_01, '50': median, '95': perctile_95, '99': perctile_99}
     return ret
 
 

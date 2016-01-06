@@ -105,7 +105,7 @@ def do_metrics_list(csv=False):
 
     categories = [
         'cpu', 'cpu_cred', 'rd_bytes', 'rd_ops', 'wr_bytes', 'wr_ops', 'ni', 'no']
-    perctiles = ('50', '95', '99')
+    perctiles = ('1', '50', '95', '99')
     names = ['%s_%s' % (c, p) for c in categories for p in perctiles]
 
     def getter(name):
